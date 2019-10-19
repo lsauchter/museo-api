@@ -7,13 +7,13 @@ const jsonParser = express.json()
 
 const sanitizeMuseums = museum => ({
     id: museum.id,
-    mid: museum.mid,
+    mid: Number(museum.mid),
     discipl: xss(museum.discipl),
     commonname: xss(museum.commonname),
     phone: xss(museum.phone),
     weburl: xss(museum.weburl),
-    longitude: museum.longitude,
-    latitude: museum.latitude,
+    longitude: Number(museum.longitude),
+    latitude: Number(museum.latitude),
     gstreet: xss(museum.gstreet),
     gcity: xss(museum.gcity),
     gstate: xss(museum.gstate),
