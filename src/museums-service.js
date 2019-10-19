@@ -6,3 +6,5 @@ const MuseumsService = {
             .andwhereBetween('LONGITUDE', [lon1, lon2])
     }
 }
+
+module.exports = MuseumsService
