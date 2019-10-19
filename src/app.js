@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
+const museumsRouter = require('./museums-router')
 
 const app = express()
 
@@ -26,6 +27,8 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
+
+app.use('/api/museums', museumsRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello world')
