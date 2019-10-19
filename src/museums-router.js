@@ -37,11 +37,32 @@ const formatString = word => {
 museumsRouter
     .route('/')
     .get(jsonParser, (req, res, next) => {
-        const {latitude, longitude} = req.body.coords
+        if (!req.body.coordinates) {
+            return res.status(400).json({
+                error: {message: 'Missing key coordinates in request'}
+            })
+        }
+
+        const {latitude, longitude} = req.body.coordinates
+
+        if (!latitude) {
+            return res.status(400).json({
+                error: {message: 'Missing latitude in request'}
+            })
+        }
+        if (!longitude) {
+            return res.status(400).json({
+                error: {message: 'Missing longitude in request'}
+            })
+        }
+
         latitude.sort((a, b) => a - b)
         longitude.sort((a, b) => a -b)
         MuseumsService.getMuseums(req.app.get('db'), latitude[0], latitude[1], longitude[0], longitude[1])
             .then(museums => {
+
+                //formatting data from the all uppercase db format//
+
                 museums.forEach(museum => {
                     const nameWords = museum.commonname.split(' ')
                     const formattedName = nameWords.map(word => formatString(word))
