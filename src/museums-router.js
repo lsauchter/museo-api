@@ -38,31 +38,25 @@ const formatString = word => {
 
 museumsRouter
     .route('/')
-    .get(jsonParser, (req, res, next) => {
-        if (!req.body.coordinates) {
+    .get((req, res, next) => {
+        const {latitude, longitude} = req.query
+
+        if (!latitude || latitude.length !== 2) {
             return res.status(400).json({
-                error: {message: 'Missing key coordinates in request'}
+                error: {message: 'Must include two latitudes in request query'}
+            })
+        }
+        if (!longitude || longitude.length !== 2) {
+            return res.status(400).json({
+                error: {message: 'Must include two longitudes in request query'}
             })
         }
 
-        const {latitude, longitude} = req.body.coordinates
-
-        if (!latitude) {
-            return res.status(400).json({
-                error: {message: 'Missing latitude in request'}
-            })
-        }
-        if (!longitude) {
-            return res.status(400).json({
-                error: {message: 'Missing longitude in request'}
-            })
-        }
-
-        latitude.sort((a, b) => a - b)
-        longitude.sort((a, b) => a -b)
+        const lat = latitude.map(num => Number(num)).sort((a, b) => a - b)
+        const lon = longitude.map(num => Number(num)).sort((a, b) => a -b)
         
         //data is spread across 3 databases - all 3 must be queried before sending response//
-        const getData1 = MuseumsService.getMuseums(req.app.get('db1'), latitude[0], latitude[1], longitude[0], longitude[1])
+        const getData1 = MuseumsService.getMuseums(req.app.get('db1'), lat[0], lat[1], lon[0], lon[1])
             .then(museums => {
                 return museums})
             .catch(next)
