@@ -56,43 +56,61 @@ museumsRouter
             })
         }
 
+        const allMuseums = []
+
         latitude.sort((a, b) => a - b)
         longitude.sort((a, b) => a -b)
-        MuseumsService.getMuseums(req.app.get('db'), latitude[0], latitude[1], longitude[0], longitude[1])
+        //data is spread across 3 databases - all 3 must be queried before sending response//
+        const getData1 = MuseumsService.getMuseums(req.app.get('db1'), latitude[0], latitude[1], longitude[0], longitude[1])
             .then(museums => {
+                console.log(museums)
+                allMuseums.push(museums)})
+            .catch(next)
+        
+        const getData2 = MuseumsService.getMuseums(req.app.get('db2'), latitude[0], latitude[1], longitude[0], longitude[1])
+            .then(museums => {
+                allMuseums.push(museums)})
+            .catch(next)
 
+        const getData3 = MuseumsService.getMuseums(req.app.get('db3'), latitude[0], latitude[1], longitude[0], longitude[1])
+            .then(museums => {
+                allMuseums.push(museums)})
+            .catch(next)
+
+        Promise.all([getData1, getData2, getData3])
+            .then(() => {           
+                console.log('finished', allMuseums)
                 //formatting data from the all uppercase db format//
 
-                museums.forEach(museum => {
-                    const nameWords = museum.commonname.split(' ')
-                    const formattedName = nameWords.map(word => formatString(word))
-                    const name = formattedName.join(' ')
-                    museum.commonname = name
+                // allMuseums.forEach(museum => {
+                //     const nameWords = museum.commonname.split(' ')
+                //     const formattedName = nameWords.map(word => formatString(word))
+                //     const name = formattedName.join(' ')
+                //     museum.commonname = name
                     
-                    if (museum.phone !== ' ') {
-                        const numbers = museum.phone.split('')
-                        const areaCode = numbers[0] + numbers[1] + numbers[2]
-                        const first3 = numbers[3] + numbers[4] + numbers[5]
-                        const last4 = numbers[6] + numbers[7] + numbers[8] + numbers[9]
-                        const phoneNumber = `(${areaCode})${first3}-${last4}`
-                        museum.phone = phoneNumber
-                    }
+                //     if (museum.phone !== ' ') {
+                //         const numbers = museum.phone.split('')
+                //         const areaCode = numbers[0] + numbers[1] + numbers[2]
+                //         const first3 = numbers[3] + numbers[4] + numbers[5]
+                //         const last4 = numbers[6] + numbers[7] + numbers[8] + numbers[9]
+                //         const phoneNumber = `(${areaCode})${first3}-${last4}`
+                //         museum.phone = phoneNumber
+                //     }
 
-                    museum.weburl = museum.weburl.toLowerCase()
+                //     museum.weburl = museum.weburl.toLowerCase()
 
-                    const streetWords = museum.gstreet.split(' ')
-                    const formattedStreet = streetWords.map(word => formatString(word))
-                    const street = formattedStreet.join(' ')
-                    museum.gstreet = street
+                //     const streetWords = museum.gstreet.split(' ')
+                //     const formattedStreet = streetWords.map(word => formatString(word))
+                //     const street = formattedStreet.join(' ')
+                //     museum.gstreet = street
 
-                    const cityWords = museum.gcity.split(' ')
-                    const formattedCity = cityWords.map(word => formatString(word))
-                    const city = formattedCity.join(' ')
-                    museum.gcity = city
-                })
-                res.json(museums.map(sanitizeMuseums))
+                //     const cityWords = museum.gcity.split(' ')
+                //     const formattedCity = cityWords.map(word => formatString(word))
+                //     const city = formattedCity.join(' ')
+                //     museum.gcity = city
+                // })
+                // res.json(allMuseums.map(sanitizeMuseums))
             })
-            .catch(next)
     })
 
 module.exports = museumsRouter
