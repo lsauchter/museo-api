@@ -1,9 +1,7 @@
 const express = require('express')
 const xss = require('xss')
 const MuseumsService = require('./museums-service')
-
 const museumsRouter = express.Router()
-const jsonParser = express.json()
 
 const sanitizeMuseums = museum => ({
     id: museum.id,
@@ -21,7 +19,6 @@ const sanitizeMuseums = museum => ({
 })
 
 //for correcting db strings from being all upper case//
-
 const formatString = word => {
     if (word === 'PO') {
         return word
@@ -76,7 +73,6 @@ museumsRouter
                 const allMuseums = [...museums[0], ...museums[1], ...museums[2]]
                 
                 //formatting data from the all uppercase db format//
-
                 allMuseums.forEach(museum => {
                     const nameWords = museum.commonname.split(' ')
                     const formattedName = nameWords.map(word => formatString(word))
