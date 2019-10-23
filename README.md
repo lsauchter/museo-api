@@ -1,26 +1,80 @@
-# Express Boilerplate!
+# museo API
 
-This is a boilerplate project used for starting new projects!
+This RESTful API controls all interactions between the frontend museo app and the database.
 
-## Set up
+## Technology
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+The API was built using Node, Express, and Knex. The database was built using PostgreSQL
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+museo live page:  
+[https://museo.now.sh/](https://museo.now.sh/)  
+TechTracker repo:  
+[https://github.com/lsauchter/museo-client](https://github.com/lsauchter/museo-client)
 
-## Scripts
+---
 
-Start the application `npm start`
+## Using this API
 
-Start nodemon for the application `npm run dev`
 
-Run the tests `npm test`
+### Get Museums  
+Returns json data about all museums between two sets of coordinates
 
-## Deploying
+#### URL  
+    /api/museums
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+* **Method**  
+    `GET`
+
+* **URL Params**  
+    **Required**  
+    `latitude=[latitude]&latitude=[latitude]`  
+    `longitude=[longitude]&longitude=[longitude]`  
+
+* **Body Params**  
+    None
+
+* **Success Response**  
+    Code: 200  
+    Content:  
+    ```javascript
+        {
+            id: idNumber,
+            mid: museumIdNumber,
+            commonname: 'name',
+            phone: phoneNumber,
+            weburl: 'website',
+            discipl: 'museum category',
+            longitude: longitudeNumber,
+            latitude: latitudeNumber,
+            gstreet: 'street address',
+            gcity: 'city name',
+            gstate: 'state abbreviation',
+            gzip5: 'zip code'
+        }
+    ```
+
+* **Error Response**  
+    Code: 500
+
+* **Sample Call**  
+    ```javascript
+    fetch(url + '/api/museums?longitude=-73.17812&longitude=-72.97812&latitude=40.65001&latitude=40.75001')
+    .then(response =>  reponse.json())
+    ```
+* **Sample Response**
+    ```javascript
+    {
+        id: 2771,
+        mid: 8403601669,
+        commonname:	'Bronx Zoo',
+        phone:	7183671010,
+        weburl:	'http://bronxzoo.com/',
+        discipl: 'ZAW',
+        longitude: -73.87812,
+        latitude: 40.85001,
+        gstreet: '2300 Southern Blvd',
+        gcity: 'Bronx',
+        gstate:	'NY',
+        gzip5: '10460'
+    }
+    ```
